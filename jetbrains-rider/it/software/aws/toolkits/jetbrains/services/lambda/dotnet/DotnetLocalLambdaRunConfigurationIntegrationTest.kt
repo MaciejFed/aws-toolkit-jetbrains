@@ -6,7 +6,6 @@ package software.aws.toolkits.jetbrains.services.lambda.dotnet
 import base.AwsReuseSolutionTestBase
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.jetbrains.rider.test.annotations.TestEnvironment
 import org.assertj.core.api.Assertions.assertThat
 import org.testng.annotations.BeforeMethod
 import org.testng.annotations.Test
@@ -43,7 +42,6 @@ abstract class DotnetLocalLambdaRunConfigurationIntegrationTestBase(private val 
     override fun getSolutionDirectoryName(): String = solutionName
 
     @Test
-    @TestEnvironment(solution = "EchoLambda")
     fun samIsExecuted() {
         val runConfiguration = createHandlerBasedRunConfiguration(
             project = project,
@@ -57,7 +55,6 @@ abstract class DotnetLocalLambdaRunConfigurationIntegrationTestBase(private val 
     }
 
     @Test
-    @TestEnvironment(solution = "EchoLambda")
     fun envVarsArePassed() {
         val envVars = mutableMapOf("Foo" to "Bar", "Bat" to "Baz")
 
@@ -78,7 +75,6 @@ abstract class DotnetLocalLambdaRunConfigurationIntegrationTestBase(private val 
     }
 
     @Test
-    @TestEnvironment(solution = "EchoLambda")
     fun regionIsPassed() {
         val runConfiguration = createHandlerBasedRunConfiguration(
             project = project,
@@ -95,7 +91,6 @@ abstract class DotnetLocalLambdaRunConfigurationIntegrationTestBase(private val 
     }
 
     @Test
-    @TestEnvironment(solution = "EchoLambda")
     fun credentialsArePassed() {
         val runConfiguration = createHandlerBasedRunConfiguration(
             project = project,
