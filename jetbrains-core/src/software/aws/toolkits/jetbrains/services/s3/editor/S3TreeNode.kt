@@ -9,6 +9,7 @@ import com.intellij.ui.treeStructure.SimpleNode
 import kotlinx.coroutines.runBlocking
 import software.aws.toolkits.resources.message
 import java.time.Instant
+import java.util.*
 
 sealed class S3TreeNode(val bucketName: String, val parent: S3TreeDirectoryNode?, val key: String) : SimpleNode() {
     open val isDirectory = false
@@ -22,7 +23,7 @@ fun S3TreeNode.getDirectoryKey() = if (isDirectory) {
     parent?.key ?: throw IllegalStateException("$key claimed it was not a directory but has no parent!")
 }
 
-class S3TreeDirectoryNode(private val bucket: S3VirtualBucket, parent: S3TreeDirectoryNode?, key: String) : S3TreeNode(bucket.name, parent, key) {
+class S3TreeDirectoryNode(val bucket: S3VirtualBucket, parent: S3TreeDirectoryNode?, key: String) : S3TreeNode(bucket.name, parent, key) {
     override val isDirectory = true
     private val childrenLock = Object()
     private val loadedPages = mutableSetOf<String>()
@@ -78,14 +79,37 @@ class S3TreeDirectoryNode(private val bucket: S3VirtualBucket, parent: S3TreeDir
 
 private val fileTypeRegistry = FileTypeRegistry.getInstance()
 
-class S3TreeObjectNode(bucketName: String, parent: S3TreeDirectoryNode?, key: String, val size: Long, val lastModified: Instant) :
+open class S3TreeObjectNode(bucketName: String, parent: S3TreeDirectoryNode?, key: String, val size: Long, val lastModified: Instant) :
     S3TreeNode(bucketName, parent, key) {
 
+    var showHistory: Boolean = false
     private val fileType = fileTypeRegistry.getFileTypeByFileName(name)
 
     init {
         fileType.takeIf { it !is UnknownFileType }?.icon.let { icon = it }
     }
+
+    override fun getChildren(): Array<S3TreeNode> {
+        if (showHistory) {
+            val response = runBlocking {
+                parent?.bucket?.listVersionObjects(key)
+            }
+            return (response?.versions()?.map {
+                S3TreeObjectNodeFinal(bucketName, parent, key, it.size(), it.lastModified(), it.versionId()) as S3TreeNode
+            }?: emptyList()).toTypedArray()
+        }
+        return emptyArray()
+    }
 }
+
+class S3TreeObjectNodeFinal(bucketName: String, parent: S3TreeDirectoryNode?, key: String, size: Long, lastModified: Instant, val versionId: String) :
+    S3TreeObjectNode(bucketName, parent, key, size, lastModified) {
+    override fun getName(): String = "/$versionId"
+    private val fileType = fileTypeRegistry.getFileTypeByFileName(key.substringAfterLast('/'))
+
+    init {
+        fileType.takeIf { it !is UnknownFileType }?.icon.let { icon = it }
+    }
+    }
 
 class S3TreeContinuationNode(bucketName: String, parent: S3TreeDirectoryNode?, key: String, val token: String) : S3TreeNode(bucketName, parent, key)
