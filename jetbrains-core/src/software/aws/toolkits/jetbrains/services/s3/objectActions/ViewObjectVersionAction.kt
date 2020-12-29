@@ -3,6 +3,7 @@
 package software.aws.toolkits.jetbrains.services.s3.objectActions
 
 import com.intellij.icons.AllIcons
+import software.amazon.awssdk.services.s3.model.BucketVersioningStatus
 import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeNode
 import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeObjectNode
 import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeTable
@@ -18,5 +19,6 @@ class ViewObjectVersionAction constructor(treeTable: S3TreeTable) :
         }
     }
 
-    override fun enabled(node: S3TreeNode): Boolean = node::class == S3TreeObjectNode::class
+    override fun enabled(node: S3TreeNode): Boolean =
+        treeTable.bucketVersioningStatus == BucketVersioningStatus.ENABLED && node::class == S3TreeObjectNode::class
 }
