@@ -21,7 +21,6 @@ import software.aws.toolkits.jetbrains.services.s3.upload
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.URL
-import java.util.*
 
 class S3VirtualBucket(val s3Bucket: Bucket, val client: S3Client) : LightVirtualFile(s3Bucket.name()) {
     override fun isWritable(): Boolean = false

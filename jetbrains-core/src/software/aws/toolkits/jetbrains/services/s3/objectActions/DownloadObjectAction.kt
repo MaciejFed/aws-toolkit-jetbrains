@@ -34,7 +34,11 @@ class DownloadObjectAction constructor(private val project: Project, treeTable: 
     S3ObjectAction(treeTable, message("s3.download.object.action"), AllIcons.Actions.Download) {
 
     private data class DownloadInfo(val s3Object: String, val diskLocation: Path, val versionId: String = "") {
-        constructor(s3Object: S3TreeObjectNode, diskLocation: Path) : this(s3Object.key, diskLocation, if (s3Object is S3TreeObjectVersionNode) s3Object.versionId else "")
+        constructor(s3Object: S3TreeObjectNode, diskLocation: Path) : this(
+            s3Object.key,
+            diskLocation,
+            if (s3Object is S3TreeObjectVersionNode) s3Object.versionId else ""
+        )
     }
 
     enum class ConflictResolution(val message: String) {

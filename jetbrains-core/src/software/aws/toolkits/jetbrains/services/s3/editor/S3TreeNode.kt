@@ -97,7 +97,8 @@ open class S3TreeObjectNode(val bucket: S3VirtualBucket, parent: S3TreeDirectory
                 response
                     .versions()
                     ?.map { S3TreeObjectVersionNode(bucket, parent, key, it.size(), it.lastModified(), it.versionId()) as S3TreeNode }
-                    ?: emptyList())
+                    ?: emptyList()
+                )
                 .toTypedArray()
         }
         return emptyArray()
@@ -112,6 +113,6 @@ class S3TreeObjectVersionNode(bucket: S3VirtualBucket, parent: S3TreeDirectoryNo
     init {
         fileType.takeIf { it !is UnknownFileType }?.icon.let { icon = it }
     }
-    }
+}
 
 class S3TreeContinuationNode(bucketName: String, parent: S3TreeDirectoryNode?, key: String, val token: String) : S3TreeNode(bucketName, parent, key)

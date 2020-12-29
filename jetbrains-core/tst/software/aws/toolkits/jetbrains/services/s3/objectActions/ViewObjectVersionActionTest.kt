@@ -75,17 +75,15 @@ class ViewObjectVersionActionTest {
         assertThat(node.lastModified).isEqualTo(objectVersion.lastModified())
     }
 
-    private fun setUpS3TreeTable(objectNode: S3TreeObjectNode): S3TreeTable {
-        return mock {
-            on { getSelectedNodes() }.thenReturn( listOf(objectNode))
+    private fun setUpS3TreeTable(objectNode: S3TreeObjectNode): S3TreeTable =
+        mock {
+            on { getSelectedNodes() }.thenReturn(listOf(objectNode))
         }
-    }
 
-    private fun setUpVirtualBucket(objectVersion: List<ObjectVersion>): S3VirtualBucket {
-        return mock {
-            onBlocking { listVersionObjects(any())}.thenReturn(ListObjectVersionsResponse.builder().versions(objectVersion).build())
+    private fun setUpVirtualBucket(objectVersion: List<ObjectVersion>): S3VirtualBucket =
+        mock {
+            onBlocking { listVersionObjects(any()) }.thenReturn(ListObjectVersionsResponse.builder().versions(objectVersion).build())
 
             on { name }.thenReturn("testBucket")
         }
-    }
 }

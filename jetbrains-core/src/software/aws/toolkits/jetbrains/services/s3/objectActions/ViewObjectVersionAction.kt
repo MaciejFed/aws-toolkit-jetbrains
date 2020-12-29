@@ -19,5 +19,4 @@ class ViewObjectVersionAction constructor(treeTable: S3TreeTable) :
     }
 
     override fun enabled(node: S3TreeNode): Boolean = node::class == S3TreeObjectNode::class
-
 }

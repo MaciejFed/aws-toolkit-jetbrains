@@ -75,7 +75,13 @@ fun S3Client.download(
     destination: Path,
     message: String = message("s3.download.object.progress", key),
     startInBackground: Boolean = true
-): CompletionStage<GetObjectResponse> = download(project, GetObjectRequest.builder().bucket(bucket).key(key).build(), destination.outputStream(), message, startInBackground)
+): CompletionStage<GetObjectResponse> = download(
+    project,
+    GetObjectRequest.builder().bucket(bucket).key(key).build(),
+    destination.outputStream(),
+    message,
+    startInBackground
+)
 
 fun S3Client.download(
     project: Project,

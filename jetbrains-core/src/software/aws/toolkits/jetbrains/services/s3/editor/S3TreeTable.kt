@@ -111,7 +111,7 @@ class S3TreeTable(
             return true
         }
         val versionPostfix = if (objectNode is S3TreeObjectVersionNode) "_${objectNode.versionId}" else ""
-        val fileWrapper = VirtualFileWrapper(File("${FileUtil.getTempDirectory()}${File.separator}${objectNode.key.replace('/', '_')}${versionPostfix}"))
+        val fileWrapper = VirtualFileWrapper(File("${FileUtil.getTempDirectory()}${File.separator}${objectNode.key.replace('/', '_')}$versionPostfix"))
         // set the file to not be read only so that the S3Client can write to the file
         ApplicationManager.getApplication().runWriteAction {
             fileWrapper.virtualFile?.isWritable = true
