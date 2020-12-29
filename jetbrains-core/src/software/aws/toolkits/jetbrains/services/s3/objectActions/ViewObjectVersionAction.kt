@@ -3,13 +3,12 @@
 package software.aws.toolkits.jetbrains.services.s3.objectActions
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.project.Project
 import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeNode
 import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeObjectNode
 import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeTable
 import software.aws.toolkits.resources.message
 
-class ViewObjectVersionHistoryAction constructor(private val project: Project, treeTable: S3TreeTable) :
+class ViewObjectVersionAction constructor(treeTable: S3TreeTable) :
     SingleS3ObjectAction(treeTable, message("s3.version.history.view"), AllIcons.Actions.Find) {
 
     override fun performAction(node: S3TreeNode) {

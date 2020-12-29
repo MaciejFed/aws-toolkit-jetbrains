@@ -6,7 +6,7 @@ package software.aws.toolkits.jetbrains.services.s3.objectActions
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
 import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeNode
-import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeObjectNodeFinal
+import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeObjectVersionNode
 import software.aws.toolkits.jetbrains.services.s3.editor.S3TreeTable
 import software.aws.toolkits.jetbrains.utils.notifyError
 import software.aws.toolkits.resources.message
@@ -16,7 +16,7 @@ import java.awt.datatransfer.StringSelection
 class CopyUrlAction(private val project: Project, treeTable: S3TreeTable) : SingleS3ObjectAction(treeTable, message("s3.copy.url")) {
     override fun performAction(node: S3TreeNode) = try {
         var url = treeTable.bucket.generateUrl(node.key).toString()
-        if (node is S3TreeObjectNodeFinal) {
+        if (node is S3TreeObjectVersionNode) {
             url += "?versionId=${node.versionId}"
         }
         CopyPasteManager.getInstance().setContents(StringSelection(url))

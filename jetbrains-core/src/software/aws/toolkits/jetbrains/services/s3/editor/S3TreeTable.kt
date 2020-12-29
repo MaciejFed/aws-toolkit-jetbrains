@@ -110,7 +110,7 @@ class S3TreeTable(
             S3Telemetry.downloadObject(project, false)
             return true
         }
-        val versionPostfix = if (objectNode is S3TreeObjectNodeFinal) "_${objectNode.versionId}" else ""
+        val versionPostfix = if (objectNode is S3TreeObjectVersionNode) "_${objectNode.versionId}" else ""
         val fileWrapper = VirtualFileWrapper(File("${FileUtil.getTempDirectory()}${File.separator}${objectNode.key.replace('/', '_')}${versionPostfix}"))
         // set the file to not be read only so that the S3Client can write to the file
         ApplicationManager.getApplication().runWriteAction {
@@ -119,10 +119,10 @@ class S3TreeTable(
 
         launch {
             try {
-                if (objectNode is S3TreeObjectNodeFinal)
-                    bucket.downloadVersionHistory(project, objectNode.key, objectNode.versionId, fileWrapper.file.outputStream())
-                else
-                    bucket.download(project, objectNode.key, fileWrapper.file.outputStream())
+                when (objectNode) {
+                    is S3TreeObjectVersionNode -> bucket.downloadVersionHistory(project, objectNode.key, objectNode.versionId, fileWrapper.file.outputStream())
+                    else -> bucket.download(project, objectNode.key, fileWrapper.file.outputStream())
+                }
                 withContext(edt) {
                     // If the file type is not associated, prompt user to associate. Returns null on cancel
                     fileWrapper.virtualFile?.let {
